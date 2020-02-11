@@ -12,8 +12,8 @@
 
 // pin definition
 #define LORA_NSS D8
-#define LORA_DI00 D0
-#define LORA_DI01 D3
+#define LORA_DI00 D1
+#define LORA_DI01 D2
 #define LORA_RST D4
 // modem configuration
 #define LORA_CARRIER_FREQUENCY                          868.0f  // MHz
@@ -23,7 +23,7 @@
 #define LORA_OUTPUT_POWER                               14      // dBm
 #define LORA_CURRENT_LIMIT                              120     // mA
 
-SX1276 lora = new Module(LORA_NSS, LORA_DI00, -1, LORA_DI01);
+SX1276 lora = new Module(LORA_NSS, LORA_DI00, LORA_RST, LORA_DI01);
 
 bool receivedFlag = false;
 bool enableInterrupt = true;
@@ -84,7 +84,6 @@ void loop() {
 
   if (Serial.available()) {
     enableInterrupt = false;
-    lora.standby();
     char c = Serial.read();
     Serial.print(c);
 
