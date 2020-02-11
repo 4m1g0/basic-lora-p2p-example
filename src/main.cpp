@@ -16,7 +16,7 @@
 #define LORA_DI01 D2
 #define LORA_RST D4
 // modem configuration
-#define LORA_CARRIER_FREQUENCY                          868.0f  // MHz
+#define LORA_CARRIER_FREQUENCY                          868.1f  // MHz
 #define LORA_BANDWIDTH                                  125.0f  // kHz dual sideband
 #define LORA_SPREADING_FACTOR                           7
 #define LORA_CODING_RATE                                8       // 4/8, Extended Hamming
@@ -71,6 +71,8 @@ void setup() {
     Serial.println(state);
     while (true);
   }
+
+  Serial.println(LORA_CARRIER_FREQUENCY);
 }
 
 void loop() {
@@ -116,6 +118,7 @@ void handleReceivedPacket() {
   size_t respLen = lora.getPacketLength();
   uint8_t* respFrame = new uint8_t[respLen];
   int state = lora.readData(respFrame, respLen);
+  float ferror = lora.getFrequencyError();
 
   if (state == ERR_NONE) {
     PRINT_BUFF(respFrame, respLen);
@@ -128,6 +131,9 @@ void handleReceivedPacket() {
     Serial.print(F("[SX12x8] Failed, code "));
     Serial.println(state);
   }
+
+  Serial.print("Frequency error: ");
+  Serial.println(ferror);
 }
 
 void sendHello() {
@@ -135,6 +141,8 @@ void sendHello() {
 
   uint8_t frame[12] = "hello world";
   int state = lora.transmit(frame, 12);
+
+  
 
   if (state == ERR_NONE) {
     Serial.println(F("sent successfully!"));
